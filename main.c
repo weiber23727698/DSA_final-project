@@ -8,18 +8,22 @@ struct Node{
     int l;
     char *s;
     node *n;
-}**table[10001];
-int n_mails, n_queries,size[10001][10001];
+}***table;
+int n_mails, n_queries,**size;
 mail *mails;
 query *queries;
 void init(){
-    for(int i=0;i<=10000;++i){
+    int i;
+    table=(node***)malloc(sizeof(node**)*(n_mails+1));
+    size=(int**)malloc(sizeof(int*)*(n_mails+1));
+    for(i=0;i<=n_mails;++i){
         table[i]=(node**)malloc(sizeof(node*)*10001);
+        size[i]=(int*)malloc(sizeof(int)*10001);
         for(int j=0;j<=10000;++j)
             size[i][j]=0;
     }
 }
-int answer_array[100000],ans_length;
+int answer_array[1000000],ans_length;
 node* create_node(char *s,int l,int r){
     node *newnode=(node*)malloc(sizeof(node));
     newnode->n=NULL;
@@ -51,8 +55,8 @@ int hash(char *s,int l,int r){
         ans+=hash_char(s[i]);
         ans%=base;
     }
-    if(ans<=0)
-        system("pause");
+    /*if(ans<=0)
+        system("pause");*/
     return ans;
 }
 int issame(char *s1,char*s2,int l1,int r1,int l2,int r2){
@@ -100,7 +104,7 @@ void build(){
         make_table(i,mails[i].subject);
     }
 }
-int find(int mid,char *s,int l,int r){//tokenæœ‰æ²’æœ‰åœ¨mails[id]è£¡é¢
+int find(int mid,char *s,int l,int r){//token¦³¨S¦³¦bmails[id]¸Ì­±
     int h=hash(s,l,r);
     node *c=table[mid][h];
     for(int i=1;i<=size[mid][h];++i){
@@ -126,13 +130,13 @@ int eval(char *ex,int mid){
         While(precedence of operator < top of stack)
             pop top of stack to final result
         push operator to stack
-    Else if (encounter â€˜(â€˜ )
+    Else if (encounter ¡¥(¡¥ )
         Push to stack
-    Else if (encounter â€˜)â€™)
-        While(top of stack != â€˜(â€˜)
+    Else if (encounter ¡¥)¡¦)
+        While(top of stack != ¡¥(¡¥)
             Pop top of stack to final result
                 Discard both brackets*/
-    char stack1[2048],stack2[2048],stack3[2048];
+    char stack1[2050],stack2[2050],stack3[2050];
     int c1=0,i=0,c2=0,i2,c3=0;
     while(ex[i]!='\0'){
         if((ex[i]>='0'&&ex[i]<='9')||('a'<=ex[i]&&ex[i]<='z')||('A'<=ex[i]&&ex[i]<='Z')){
@@ -142,17 +146,17 @@ int eval(char *ex,int mid){
             stack2[++c2]=find(mid,ex,i2,i++);
         }
         else if(ex[i]=='!'){
-            while(c1>0&&prior(stack1[c1])>=3)
+            while(c1>0&&prior(stack1[c1])>=3&&stack1[c1]!='(')
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
         else if(ex[i]=='&'){
-            while(c1>0&&prior(stack1[c1])>=2)
+            while(c1>0&&prior(stack1[c1])>=2&&stack1[c1]!='(')
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
         else if(ex[i]=='|'){
-            while(c1>0&&prior(stack1[c1])>=1)
+            while(c1>0&&prior(stack1[c1])>=1&&stack1[c1]!='(')
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
@@ -160,11 +164,15 @@ int eval(char *ex,int mid){
             while(stack1[c1]!='(')
                 stack2[++c2]=stack1[c1--];
             ++i;
+            c1--;
         }
         else{
             stack1[++c1]=ex[i++];
         }
     }
+    while(c1>0)
+        stack2[++c2]=stack1[c1--];
+    //return 1;
     for(i=1;i<=c2;++i){
         switch(stack2[i]){
             case('!'):
@@ -174,7 +182,7 @@ int eval(char *ex,int mid){
                 stack3[c3-1]&=stack3[c3];
                 --c3;
                 break;
-            case('|'):
+            case('|'):;
                 stack3[c3-1]|=stack3[c3];
                 --c3;
                 break;
@@ -194,14 +202,16 @@ void ans_expr(char s[3000]){
 int main(void) {
 	api.init(&n_mails, &n_queries, &mails, &queries);
 	init();
+	//api.answer(0,NULL,0);
 	build();
+	//while(1);
 	/*ans_length=2;
 	answer_array[0]=38;
 	answer_array[1]=3;*/
 	//for(int i = 0; i < n_queries; i++)
     for(int i = 0; i < n_queries; i++)
         /*if(queries[i].type == expression_match)
-            api.answer(i, answer_array,0);*/
+            api.answer(i, NULL,0);*/
         //api.answer(queries[i].id, answer_array, ans_length);
 		if(queries[i].type == expression_match){
             ans_expr(queries[i].data.expression_match_data.expression);

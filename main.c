@@ -99,9 +99,9 @@ void make_table(int mid,char *s){
 }
 void build(){
     for(int i=0;i<n_mails;++i){
-        make_table(i,mails[i].content);
+        make_table(mails[i].id,mails[i].content);
         //return;
-        make_table(i,mails[i].subject);
+        make_table(mails[i].id,mails[i].subject);
     }
 }
 int find(int mid,char *s,int l,int r){//token有沒有在mails[id]裡面
@@ -217,6 +217,5 @@ int main(void) {
             ans_expr(queries[i].data.expression_match_data.expression);
             api.answer(queries[i].id, answer_array, ans_length);
 		}
-
   return 0;
 }

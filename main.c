@@ -100,7 +100,7 @@ void build(){
         make_table(i,mails[i].subject);
     }
 }
-int find(int mid,char *s,int l,int r){//token¦³¨S¦³¦bmails[id]¸Ì­±
+int find(int mid,char *s,int l,int r){//tokenæœ‰æ²’æœ‰åœ¨mails[id]è£¡é¢
     int h=hash(s,l,r);
     node *c=table[mid][h];
     for(int i=1;i<=size[mid][h];++i){
@@ -126,10 +126,10 @@ int eval(char *ex,int mid){
         While(precedence of operator < top of stack)
             pop top of stack to final result
         push operator to stack
-    Else if (encounter ¡¥(¡¥ )
+    Else if (encounter â€˜(â€˜ )
         Push to stack
-    Else if (encounter ¡¥)¡¦)
-        While(top of stack != ¡¥(¡¥)
+    Else if (encounter â€˜)â€™)
+        While(top of stack != â€˜(â€˜)
             Pop top of stack to final result
                 Discard both brackets*/
     char stack1[2048],stack2[2048],stack3[2048];
@@ -195,11 +195,13 @@ int main(void) {
 	api.init(&n_mails, &n_queries, &mails, &queries);
 	init();
 	build();
-	ans_length=2;
+	/*ans_length=2;
 	answer_array[0]=38;
-	answer_array[1]=3;
+	answer_array[1]=3;*/
 	//for(int i = 0; i < n_queries; i++)
-    for(int i = 0; i < 1; i++)
+    for(int i = 0; i < n_queries; i++)
+        /*if(queries[i].type == expression_match)
+            api.answer(i, answer_array,0);*/
         //api.answer(queries[i].id, answer_array, ans_length);
 		if(queries[i].type == expression_match){
             ans_expr(queries[i].data.expression_match_data.expression);

@@ -1,6 +1,6 @@
 #include "api.h"
 #include <stdio.h>
-#define base 19997
+#define base 29999
 // The testdata only contains the first 100 mails (mail1 ~ mail100)
 // and 2000 queries for you to debug.
 //FILE *fp;
@@ -10,7 +10,8 @@ struct Node{
     //char *s;
     node *n;
 }***table;
-long n_mails, n_queries,**size;
+int n_mails, n_queries;
+long **size;
 mail *mails;
 query *queries;
 long find(long mid,char *s,long l,long r);
@@ -25,7 +26,7 @@ void init(){
             size[i][j]=0;
     }
 }
-long answer_array[1000000],ans_length;
+int answer_array[1000000],ans_length;
 node* create_node(long h2){
     node *newnode=(node*)malloc(sizeof(node));
     newnode->n=NULL;
@@ -44,20 +45,26 @@ long len(char *s){
     return l;
 }
 long hash_char(char ch){
-    if('0'<=ch&&ch<='9')
+    /*if('0'<=ch&&ch<='9')
         return (long)(ch-'0');
     else if(65<=ch&&ch<=90)
         return (long)(ch-55);
     else
-        return (long)(ch-87);
+        return (long)(ch-87);*/
+    if('0'<=ch&&ch<='9')
+        return ((long)(ch-'0')*(long)(ch-'0'))%26;
+    else if(65<=ch&&ch<=90)
+        return ((long)(ch-55)*(long)(ch-55))%26;
+    else
+        return ((long)(ch-87)*(long)(ch-87))%26;
 }
 long hash2_char(char ch){
     if('0'<=ch&&ch<='9')
         return (long)(ch-22);
     else if(65<=ch&&ch<=90)
-        return ((long)(ch-65))*((long)(ch-65))%26;
+        return (((long)(ch-65))*((long)(ch-65))+(long)(ch-65))%26;
     else
-        return ((long)(ch-97))*((long)(ch-97))%26;
+        return (((long)(ch-97))*((long)(ch-97))+(long)(ch-97))%26;
 }
 long hash(char *s,long l,long r){
     long ans=0;
@@ -135,7 +142,7 @@ void build(){
             fprlongf(fp,"here:%d\n",i);*/
     }
 }
-/*long find(long mid,char *s,long l,long r){//tokenæœ‰æ²’æœ‰åœ¨mails[id]è£¡é¢
+/*long find(long mid,char *s,long l,long r){//token¦³¨S¦³¦bmails[id]¸Ì­±
     long h=hash(s,l,r);
     node *c=table[mid][h];
     for(long i=1;i<=size[mid][h];++i){
@@ -174,10 +181,10 @@ long eval(long mid,long *stack2,long c2){
         While(precedence of operator < top of stack)
             pop top of stack to final result
         push operator to stack
-    Else if (encounter â€˜(â€˜ )
+    Else if (encounter ¡¥(¡¥ )
         Push to stack
-    Else if (encounter â€˜)â€™)
-        While(top of stack != â€˜(â€˜)
+    Else if (encounter ¡¥)¡¦)
+        While(top of stack != ¡¥(¡¥)
             Pop top of stack to final result
                 Discard both brackets*/
     char stack3[2050],c3=0;
@@ -256,8 +263,8 @@ void ans_expr(char ex[3000]){
             answer_array[ans_length++]=j;
     }
 }
-long main(void) {
-    //fp=fopen("è¼¸å‡º.txt","w");
+int main(void) {
+    //fp=fopen("¿é¥X.txt","w");
 	api.init(&n_mails, &n_queries, &mails, &queries);
 	init();
 	//api.answer(0,NULL,0);
@@ -278,4 +285,3 @@ long main(void) {
         fprlongf(fp,"%d ",answer_array[i]);*/
   return 0;
 }
-

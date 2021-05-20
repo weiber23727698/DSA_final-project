@@ -3,6 +3,7 @@
 #define base 9997
 // The testdata only contains the first 100 mails (mail1 ~ mail100)
 // and 2000 queries for you to debug.
+
 typedef struct Node node;
 struct Node{
     int l;
@@ -12,6 +13,7 @@ struct Node{
 int n_mails, n_queries,**size;
 mail *mails;
 query *queries;
+int find(int mid,char *s,int l,int r);
 void init(){
     int i;
     table=(node***)malloc(sizeof(node**)*(n_mails+1));
@@ -71,9 +73,7 @@ int issame(char *s1,char*s2,int l1,int r1,int l2,int r2){
 void ins(int mid,int h,node *newnode){
     /*if(!(0<=mid&&mid<=10000&))
        exit(0);*/
-    if(!(0<=h))
-        exit(0);
-    table[mid][h]=NULL;
+    //table[mid][h]=NULL;
     if(size[mid][h]!=0)
         newnode->n=table[mid][h];
     table[mid][h]=newnode;
@@ -89,19 +89,27 @@ void make_table(int mid,char *s){
             ++c;
         }
         else if(c){
+            /*if(mid==4681&&issame(s,"Aira",i-c,i-1,0,3))
+                fprintf(fp,"here:%d\n",hash("Aira",0,3)==h);*/
             ins(mid,h,create_node(s,i-c,i-1));
+            /*f(mid==4681&&issame(s,"Aira",i-c,i-1,0,3)&&find(4681,"Aira",0,3))
+                fprintf(fp,"find:%d\n",find(4681,"Aira",0,3));*/
             h=c=0;
         }
         ++i;
     }
     if(c)
         ins(mid,h,create_node(s,i-c,i-1));
+    /*if(mid>=4681&&!find(4681,"Aira",0,3))
+            fprintf(fp,"in make table here:%d\n",mid);*/
 }
 void build(){
     for(int i=0;i<n_mails;++i){
         make_table(mails[i].id,mails[i].content);
         //return;
         make_table(mails[i].id,mails[i].subject);
+        /*if(i>=4681&&!find(4681,"Aira",0,3))
+            fprintf(fp,"here:%d\n",i);*/
     }
 }
 int find(int mid,char *s,int l,int r){//token有沒有在mails[id]裡面
@@ -110,6 +118,7 @@ int find(int mid,char *s,int l,int r){//token有沒有在mails[id]裡面
     for(int i=1;i<=size[mid][h];++i){
         if(issame(c->s,s,0,c->l-1,l,r))
             return 1;
+        c=c->n;
     }
     return 0;
 }
@@ -146,17 +155,17 @@ int eval(char *ex,int mid){
             stack2[++c2]=find(mid,ex,i2,i++);
         }
         else if(ex[i]=='!'){
-            while(c1>0&&prior(stack1[c1])>=3&&stack1[c1]!='(')
+            while(c1>0&&stack1[c1]!='('&&prior(stack1[c1])>=3)
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
         else if(ex[i]=='&'){
-            while(c1>0&&prior(stack1[c1])>=2&&stack1[c1]!='(')
+            while(c1>0&&stack1[c1]!='('&&prior(stack1[c1])>=2)
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
         else if(ex[i]=='|'){
-            while(c1>0&&prior(stack1[c1])>=1&&stack1[c1]!='(')
+            while(c1>0&&stack1[c1]!='('&&prior(stack1[c1])>=1)
                 stack2[++c2]=stack1[c1--];
             stack1[++c1]=ex[i++];
         }
@@ -210,12 +219,13 @@ int main(void) {
 	answer_array[1]=3;*/
 	//for(int i = 0; i < n_queries; i++)
     for(int i = 0; i < n_queries; i++)
-        /*if(queries[i].type == expression_match)
-            api.answer(i, NULL,0);*/
-        //api.answer(queries[i].id, answer_array, ans_length);
 		if(queries[i].type == expression_match){
             ans_expr(queries[i].data.expression_match_data.expression);
             api.answer(queries[i].id, answer_array, ans_length);
 		}
+    /*ans_expr(queries[4].data.expression_match_data.expression);
+            api.answer(queries[4].id, answer_array, ans_length);*/
+    //for(int i=0;i<ans_length;++i)
+        //fprintf(fp,"%d",find(4681,"Aira",0,3));
   return 0;
 }

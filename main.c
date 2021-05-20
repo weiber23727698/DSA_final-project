@@ -1,6 +1,6 @@
 #include "api.h"
 #include <stdio.h>
-#define base 9997
+#define base 19997
 // The testdata only contains the first 100 mails (mail1 ~ mail100)
 // and 2000 queries for you to debug.
 //FILE *fp;
@@ -19,9 +19,9 @@ void init(){
     table=(node***)malloc(sizeof(node**)*(n_mails+1));
     size=(int**)malloc(sizeof(int*)*(n_mails+1));
     for(i=0;i<=n_mails;++i){
-        table[i]=(node**)malloc(sizeof(node*)*10001);
-        size[i]=(int*)malloc(sizeof(int)*10001);
-        for(int j=0;j<=10000;++j)
+        table[i]=(node**)malloc(sizeof(node*)*(base+1));
+        size[i]=(int*)malloc(sizeof(int)*(base+1));
+        for(int j=0;j<=base;++j)
             size[i][j]=0;
     }
 }
@@ -196,7 +196,7 @@ int eval(int mid,int *stack2,int c2){
                 --c3;
                 break;
             default:
-                stack3[++c3]=find2(mid,stack2[i]/10000,stack2[i]%10000);
+                stack3[++c3]=find2(mid,stack2[i]/base,stack2[i]%base);
         }
         /*if(mid==781){
             for(int j=1;j<=c3;++j)
@@ -215,7 +215,7 @@ void ans_expr(char ex[3000]){
             i2=i;
             while(ex[i+1]!='\0'&&((ex[i+1]>='0'&&ex[i+1]<='9')||('a'<=ex[i+1]&&ex[i+1]<='z')||('A'<=ex[i+1]&&ex[i+1]<='Z')))
                 ++i;
-            stack2[++c2]=hash(ex,i2,i)*10000+hash2(ex,i2,i);
+            stack2[++c2]=hash(ex,i2,i)*base+hash2(ex,i2,i);
             /*for(int j=i2;j<=i;++j)
                 fprintf(fp,"%c",ex[j]);
             fprintf(fp," ");
